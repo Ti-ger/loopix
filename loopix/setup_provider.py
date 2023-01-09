@@ -19,6 +19,7 @@ if __name__ == "__main__":
 
 		pub = secret * g
 		file("publicProvider.bin", "wb").write(petlib.pack.encode(["provider", name, port, host, pub]))
-
+                local_path = "/volumes/global/publicProvider-" + host + ".bins"
+		file(local_path, "wb").write(petlib.pack.encode(["provider", name, port, host, pub]))
 	else:
 		print "Files Exist"

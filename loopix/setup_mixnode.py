@@ -22,5 +22,7 @@ if __name__ == "__main__":
 
 		pub = secret * g
 		file("publicMixnode.bin", "wb").write(petlib.pack.encode(["mixnode", name, port, host, group, pub]))
+                local_path = "/volumes/global/publicMixnode-" + host + ".bins"
+		file(local_path, "wb").write(petlib.pack.encode(["mixnode", name, port, host, group, pub]))
 	else:
 		print "Files exist"
