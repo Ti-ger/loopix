@@ -5,11 +5,12 @@ import os.path
 
 if __name__ == "__main__":
 
-	if not (os.path.exists("secretProvider.prv") or os.path.exists("publicProvider.bin")):
+        port = int(sys.argv[1])
+        host = sys.argv[2]
+        name = sys.argv[3]
 
-		port = int(sys.argv[1])
-		host = sys.argv[2]
-		name = sys.argv[3]
+        local_path = "/volumes/global/publicProvider-" + host + ".bin"
+	if not (os.path.exists("secretProvider.prv") and os.path.exists("publicProvider.bin") and os.path.exists(local_path)):
 
 		setup = core.setup()
 		G, o, g, o_bytes = setup
@@ -19,7 +20,6 @@ if __name__ == "__main__":
 
 		pub = secret * g
 		file("publicProvider.bin", "wb").write(petlib.pack.encode(["provider", name, port, host, pub]))
-                local_path = "/volumes/global/publicProvider-" + host + ".bins"
 		file(local_path, "wb").write(petlib.pack.encode(["provider", name, port, host, pub]))
 	else:
 		print "Files Exist"

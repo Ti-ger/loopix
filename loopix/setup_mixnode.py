@@ -11,8 +11,9 @@ if __name__ == "__main__":
 	host = sys.argv[2]
 	name = sys.argv[3]
 	group = int(sys.argv[4])
+        local_path = "/volumes/global/publicMixnode-" + host + ".bin"
 
-	if not (os.path.exists("secretMixnode.prv") or os.path.exists("publicMixnode.bin")):
+	if not (os.path.exists("secretMixnode.prv") and os.path.exists("publicMixnode.bin") and os.path.exists(local_path)):
 
 		setup = core.setup()
 		G, o, g, o_bytes = setup
@@ -22,7 +23,6 @@ if __name__ == "__main__":
 
 		pub = secret * g
 		file("publicMixnode.bin", "wb").write(petlib.pack.encode(["mixnode", name, port, host, group, pub]))
-                local_path = "/volumes/global/publicMixnode-" + host + ".bins"
 		file(local_path, "wb").write(petlib.pack.encode(["mixnode", name, port, host, group, pub]))
 	else:
 		print "Files exist"

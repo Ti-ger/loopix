@@ -4,6 +4,9 @@ COPY loopix .
 EXPOSE 3000
 RUN apt-get -y update
 RUN apt-get -y install python2.7
+RUN apt-get -y install vim
+RUN apt-get -y install iputils-ping
+RUN apt-get -y install dnsutils
 RUN apt-get -y dist-upgrade
 RUN apt-get -y install python-dev build-essential
 RUN apt-get -y install curl

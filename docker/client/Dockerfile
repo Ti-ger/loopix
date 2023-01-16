@@ -1,2 +1,2 @@
 FROM loopix_server:latest
-CMD ./start_provider.sh
+CMD ./start_client.sh

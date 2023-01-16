@@ -16,11 +16,13 @@ services:
         - ID=0
       ports: [8100:9999]
       networks:
-        - my-shared-network
+              my-shared-network:
+                aliases: 
+                 - mix-L1-P1
       volumes: 
         - my-global-volume:/volumes/global
       depends_on:
-       - loopix_server
+       - controller
    mix-L2-P1:
       build: 
         context: ..
@@ -35,7 +37,7 @@ services:
       volumes: 
         - my-global-volume:/volumes/global
       depends_on:
-       - loopix_server
+       - controller
    mix-L3-P1:
       build: 
         context: ..
@@ -50,8 +52,10 @@ services:
       volumes: 
         - my-global-volume:/volumes/global
       depends_on:
-       - loopix_server
-   provider-1:
+       - controller
+   Provider-1:
+      hostname: Provider-1
+      container_name: Provider-1
       build: 
         context: ..
         dockerfile: docker/provider/Dockerfile
@@ -61,11 +65,80 @@ services:
         - ID=9000
       ports: [9000:9999]
       networks:
+              my-shared-network:
+                aliases: 
+                 - Provider-1
+      volumes: 
+        - my-global-volume:/volumes/global
+      depends_on:
+       - controller
+   provider-2:
+      build: 
+        context: ..
+        dockerfile: docker/provider/Dockerfile
+      image: loopix-provider
+      environment: 
+        - HOST=Provider-2
+        - ID=9001
+      ports: [9001:9999]
+      networks:
+              my-shared-network:
+                aliases: 
+                 - Provider-2
+      volumes: 
+        - my-global-volume:/volumes/global
+      depends_on:
+       - controller
+   client-1:
+      hostname: Client-1
+      build: 
+        context: ..
+        dockerfile: docker/client/Dockerfile
+      image: loopix-client
+      environment: 
+        - HOST=Client-1
+        - ID=10000
+        - PROVIDER=provider9000
+      ports: [10000:9999]
+      networks:
+              my-shared-network:
+                aliases: 
+                 - Client-1
+      volumes: 
+        - my-global-volume:/volumes/global
+      depends_on:
+       - controller
+   client-2:
+      build: 
+        context: ..
+        dockerfile: docker/client/Dockerfile
+      image: loopix-client
+      environment: 
+        - HOST=Client-2
+        - ID=10001
+        - PROVIDER=provider9001
+      ports: [10001:9999]
+      networks:
+              my-shared-network:
+                aliases: 
+                 - Client-2
+      volumes: 
+        - my-global-volume:/volumes/global
+      depends_on:
+        - controller
+   controller:
+      build: 
+        context: ..
+        dockerfile: docker/controller/Dockerfile
+      image: loopix-controller
+      environment: 
+        - NUM=6
+      networks:
         - my-shared-network
       volumes: 
         - my-global-volume:/volumes/global
       depends_on:
-       - loopix_server
+        - loopix_server
 networks:
           my-shared-network: {}
 volumes:
