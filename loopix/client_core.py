@@ -32,12 +32,15 @@ class ClientCore(object):
         return header, body
 
     def process_packet(self, packet):
-        log.msg("[%s] > Processing packet." % self.name)
         tag, routing, new_header, new_body = self.packer.decrypt_sphinx_packet(packet, self.privk)
         routing_flag, meta_info = routing[0], routing[1:]
         if routing_flag == Dest_flag:
+            log.msg("[%s] > Has dest flag" % self.name)
             dest, message = self.packer.handle_received_forward(new_body)
             if dest == [self.host, self.port, self.name]:
+                
+                receiving_path = "/tmp/mail"
+		file(receiving_path, "a").write(message)
                 return "NEW", message
             else:
                 return "ERROR", []

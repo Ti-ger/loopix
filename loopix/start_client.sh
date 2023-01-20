@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 # Deploy
-python setup_client.py 9999 $HOST client${ID} ${PROVIDER}
+python setup_client.py 9999 $HOST $HOST ${PROVIDER}
 # Wait for the controller to create the db
 until [ -f /volumes/global/Controller_done ]
 do 

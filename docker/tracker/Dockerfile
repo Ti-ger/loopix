@@ -22,10 +22,8 @@ RUN yes | python2.7 -m pip install numpy
 RUN yes | python2.7 -m pip install service_identity
 RUN yes | python2.7 -m pip install sphinxmix==0.0.6
 RUN apt-get -y install htop
+RUN apt-get -y install tcpdump
+RUN apt-get -y install tcpreplay
 #sudo('apt-get -y install tshark')
 RUN python -c "import petlib; petlib.run_tests()"
-COPY loopix . 
-ENV HOST mix0
-ENV ID 0
-ENV GROUP 0
-CMD python setup_mixnode.py 9999 $HOST Mix${ID} $GROUP
+CMD /usr/bin/bash

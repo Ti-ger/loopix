@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 # Deploy
-python setup_mixnode.py 9999 $HOST Mix${ID} $GROUP
+python setup_mixnode.py 9999 $HOST $HOST $GROUP
 # Wait for the controller to create the db
 until [ -f /volumes/global/Controller_done ]
 do 

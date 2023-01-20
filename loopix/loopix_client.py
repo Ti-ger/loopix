@@ -22,6 +22,7 @@ class LoopixClient(DatagramProtocol):
     output_buffer = Queue()
     process_queue = ProcessQueue()
     reactor = reactor
+    outcounter = 0
     resolvedAdrs = {}
 
     def __init__(self, sec_params, name, port, host, provider_id, privk=None, pubk=None):
@@ -44,6 +45,7 @@ class LoopixClient(DatagramProtocol):
         self.make_loop_stream()
         self.make_drop_stream()
         self.make_real_stream()
+        self.fill_real_stream()
 
     def get_network_info(self):
         self.dbManager = DatabaseManager(self.config_params.DATABASE_NAME)
@@ -69,7 +71,12 @@ class LoopixClient(DatagramProtocol):
         self.pubs_providers = providers
 
     def register_friends(self, clients):
-        self.befriended_clients = clients
+        friends = []
+        for client in clients:
+            if client.name == self.name:
+                continue
+            friends.append(client)
+        self.befriended_clients = friends
 
     def turn_on_packet_processing(self):
         self.retrieve_messages()
@@ -96,6 +103,7 @@ class LoopixClient(DatagramProtocol):
     def read_packet(self, packet):
         decoded_packet = petlib.pack.decode(packet)
         if not decoded_packet[0] == 'DUMMY':
+            log.msg("Decoded_Packet: %s" % decoded_packet)
             flag, decrypted_packet = self.crypto_client.process_packet(decoded_packet)
             return (flag, decrypted_packet)
 
@@ -112,6 +120,16 @@ class LoopixClient(DatagramProtocol):
     def schedule_next_call(self, param, method):
         interval = sample_from_exponential(param)
         self.reactor.callLater(interval, method)
+
+    def fill_real_stream(self):
+        random_receiver = random.choice(self.befriended_clients)
+        path = self.construct_full_path(random_receiver)
+        log.msg("[%s] > Sending real message to: %s" % (self.name, random_receiver.name))
+        message = "Hello " + str(self.outcounter)
+        self.outcounter += 1
+        header, body = self.crypto_client.pack_real_message(message,random_receiver, path)
+        self.output_buffer.put((header, body))
+        self.reactor.callLater(1.0, self.fill_real_stream)
 
     def make_loop_stream(self):
         log.msg("[%s] > Sending loop packet." % self.name)

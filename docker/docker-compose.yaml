@@ -1,8 +1,10 @@
 version: "3.7"
 services: 
    loopix_server:
-     command: "tail -F /dev/null" 
+     command: "/usr/bin/rm -rf /volumes/global/*" 
      image: loopix_server
+     volumes: 
+        - my-global-volume:/volumes/global
      build:
         context: ..
         dockerfile: docker/server/Dockerfile
@@ -72,7 +74,7 @@ services:
         - my-global-volume:/volumes/global
       depends_on:
        - controller
-   provider-2:
+   Provider-2:
       build: 
         context: ..
         dockerfile: docker/provider/Dockerfile
@@ -98,7 +100,7 @@ services:
       environment: 
         - HOST=Client-1
         - ID=10000
-        - PROVIDER=provider9000
+        - PROVIDER=Provider-1
       ports: [10000:9999]
       networks:
               my-shared-network:
@@ -116,7 +118,7 @@ services:
       environment: 
         - HOST=Client-2
         - ID=10001
-        - PROVIDER=provider9001
+        - PROVIDER=Provider-2
       ports: [10001:9999]
       networks:
               my-shared-network:
@@ -132,7 +134,7 @@ services:
         dockerfile: docker/controller/Dockerfile
       image: loopix-controller
       environment: 
-        - NUM=6
+        - NUM=9
       networks:
         - my-shared-network
       volumes: 
