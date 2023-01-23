@@ -38,9 +38,12 @@ class ClientCore(object):
             log.msg("[%s] > Has dest flag" % self.name)
             dest, message = self.packer.handle_received_forward(new_body)
             if dest == [self.host, self.port, self.name]:
-                
+                if message.startswith('HT'):
+                    log.msg("[%s] > New Loop-message received" % self.name)
+                    return "NEW", []
                 receiving_path = "/tmp/mail"
-		file(receiving_path, "a").write(message)
+                file(receiving_path, "a").write(message)
+                log.msg("[%s] > New Message received: %s" % (self.name, message))
                 return "NEW", message
             else:
                 return "ERROR", []

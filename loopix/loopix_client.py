@@ -103,7 +103,6 @@ class LoopixClient(DatagramProtocol):
     def read_packet(self, packet):
         decoded_packet = petlib.pack.decode(packet)
         if not decoded_packet[0] == 'DUMMY':
-            log.msg("Decoded_Packet: %s" % decoded_packet)
             flag, decrypted_packet = self.crypto_client.process_packet(decoded_packet)
             return (flag, decrypted_packet)
 
@@ -125,7 +124,7 @@ class LoopixClient(DatagramProtocol):
         random_receiver = random.choice(self.befriended_clients)
         path = self.construct_full_path(random_receiver)
         log.msg("[%s] > Sending real message to: %s" % (self.name, random_receiver.name))
-        message = "Hello " + str(self.outcounter)
+        message = "Servus " + str(self.outcounter)
         self.outcounter += 1
         header, body = self.crypto_client.pack_real_message(message,random_receiver, path)
         self.output_buffer.put((header, body))
